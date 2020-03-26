@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(BlendShapeMixer))]
@@ -8,6 +6,7 @@ public class BlendShapeMixerEditor : Editor
 {
     BlendShapeMixer _shapeMixer;
     SerializedProperty _presets;
+    int expandIndex = -1;
 
     void OnEnable()
     {
@@ -33,6 +32,12 @@ public class BlendShapeMixerEditor : Editor
             var name = preset.FindPropertyRelative("name");
             var handlers = preset.FindPropertyRelative("handlers");
 
+            if (i == expandIndex)
+            {
+                handlers.isExpanded = true;
+                expandIndex = -1;
+            }
+
             handlers.isExpanded = EditorGUILayout.Foldout(handlers.isExpanded, name.stringValue, true);
             if (handlers.isExpanded)
             {
@@ -51,9 +56,21 @@ public class BlendShapeMixerEditor : Editor
                     {
                         _presets.InsertArrayElementAtIndex(i);
                     }
-                    if (GUILayout.Button("Remove", EditorStyles.miniButtonRight))
+                    if (GUILayout.Button("Remove", EditorStyles.miniButtonMid))
                     {
                         _presets.DeleteArrayElementAtIndex(i);
+                    }
+                    if (GUILayout.Button("▲", EditorStyles.miniButtonMid))
+                    {
+                        expandIndex = i - 1;
+                        handlers.isExpanded = false;
+                        _presets.MoveArrayElement(i, i - 1);
+                    }
+                    if (GUILayout.Button("▼", EditorStyles.miniButtonRight))
+                    {
+                        expandIndex = i + 1;
+                        handlers.isExpanded = false;
+                        _presets.MoveArrayElement(i, i + 1);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
