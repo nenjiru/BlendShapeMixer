@@ -50,6 +50,7 @@ public class BlendShapeMixer : MonoBehaviour
     #region UNITY_EVENT
     void Start()
     {
+        _initialize();
         Clear();
     }
 
@@ -63,16 +64,7 @@ public class BlendShapeMixer : MonoBehaviour
 
     void OnValidate()
     {
-        if (_meshRoot == null)
-        {
-            _meshs = null;
-            Debug.LogWarning("Plese attach root object");
-            return;
-        }
-
-        _meshs = _meshRoot.GetComponentsInChildren<SkinnedMeshRenderer>();
-        _updateBuffer();
-        _updateShape();
+        _initialize();
     }
     #endregion
 
@@ -105,7 +97,21 @@ public class BlendShapeMixer : MonoBehaviour
     #endregion
 
     #region PRIVATE_METHODS
-    public void _updateBuffer()
+    void _initialize()
+    {
+        if (_meshRoot == null)
+        {
+            _meshs = null;
+            Debug.LogWarning("Plese attach root object");
+            return;
+        }
+
+        _meshs = _meshRoot.GetComponentsInChildren<SkinnedMeshRenderer>();
+        _updateBuffer();
+        _updateShape();
+    }
+
+    void _updateBuffer()
     {
         _buffer.Clear();
         for (int i = 0; i < presets.Length; i++)
